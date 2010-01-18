@@ -1,6 +1,18 @@
-= url_keyed_objects
+= Url-keyed Object
 
-Description goes here.
+Makes it easy to work with ActiveRecord (and other) objects in Rails (and anything else) which want to use an opaque alphanumeric ID in URLs to identify themselves, rather than their database ID.
+
+    /model/1
+    
+versus
+
+    /model/a1c5t
+    
+One exposes your database IDs in your URLs, and the other doesn't. There are cases when that's genuinely useful not to expose IDs directly (changing your Database from MySQL to Something Else, say, or some radical horiztonal partitioning scheme, or easier data migration), but mostly it's a matter of personal taste.
+
+== Documentation
+
+I'm trying to make executable documentation, so all the docs are in the form of Cucumber features, under the +features+ dir. 
 
 == Note on Patches/Pull Requests
  

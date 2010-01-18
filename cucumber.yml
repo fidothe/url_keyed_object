@@ -1,0 +1,2 @@
+default: --format pretty --tags ~@wip
+wip:     --format pretty --tags @wip
