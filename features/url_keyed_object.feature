@@ -25,7 +25,7 @@ Feature: Using with ActiveRecord
       """
         @instance = Thing.new
       """
-    Then :url_key should be nil
+    Then @instance.url_key should be nil
   
   Scenario: An unsaved model object with UrlKeyedObject included
     When I make and save an instance:
@@ -33,5 +33,5 @@ Feature: Using with ActiveRecord
         @instance = Thing.new
         @instance.save!
       """
-    Then :url_key should match /[a-z0-9]{5}/
+    Then @instance.url_key should match /[a-z0-9]{5}/
   
