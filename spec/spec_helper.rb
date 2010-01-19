@@ -1,6 +1,7 @@
 $:.unshift(File.dirname(__FILE__))
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'url_keyed_object'
+require 'url_keyed_object/active_record'
 require 'spec'
 require 'spec/autorun'
 require 'rubygems'

@@ -1,3 +1,5 @@
+require 'url_keyed_object'
+
 module UrlKeyedObject
   module ActiveRecord
     # --
@@ -27,10 +29,7 @@ module UrlKeyedObject
     protected
     
     def generate_valid_url_key
-      new_url_key = UrlKeyedObject.generate_unchecked_url_key
-      while !self.valid_url_key?(new_url_key) do
-        new_url_key = UrlKeyedObject.generate_unchecked_url_key
-      end
+      new_url_key = UrlKeyedObject.generate_checked_url_key { |value| self.valid_url_key?(value) }
       write_attribute(:url_key, new_url_key)
     end
     

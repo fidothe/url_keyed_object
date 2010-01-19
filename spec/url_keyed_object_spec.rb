@@ -38,4 +38,16 @@ describe UrlKeyedObject do
       end
     end
   end
+  
+  describe "validity of URL keys" do
+    it "should be able to evaluate a block to check key validity, repeating until it generates one" do
+      valid_key_sequence = sequence('valid key sequence')
+      UrlKeyedObject.expects(:generate_unchecked_url_key).in_sequence(valid_key_sequence).returns('a1url')
+      UrlKeyedObject.expects(:generate_unchecked_url_key).in_sequence(valid_key_sequence).returns('a2url')
+      
+      key = UrlKeyedObject.generate_checked_url_key { |value| value != 'a1url' }
+      
+      key.should == 'a2url'
+    end
+  end
 end

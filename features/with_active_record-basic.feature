@@ -37,7 +37,7 @@ Feature: Using with ActiveRecord
         @instance = Thing.new
         @instance.save!
       """
-    Then @instance.url_key should match /[a-z0-9]{5}/
+    Then @instance.url_key should match /^[a-z0-9]{5}$/
   
   Scenario: Attempting to mass-assign url_key ought to fail
     When I make an instance using mass-assignment:

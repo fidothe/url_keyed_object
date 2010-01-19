@@ -6,9 +6,10 @@ module UrlKeyedObject
     # holds an array so a base-31 column (units / tens / hundreds) equiv can be 
     # encoded as an ASCII character
     def key_encoding
-      @key_encoding ||= ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", 
-                         "a", "b", "c", "d", "e", "f", "g", "h", "j", "k", "m",
-                         "n", "p", "q", "r", "s", "v", "w", "x", "y", "z"]
+      @key_encoding ||= ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
+                         "a", "b", "c", "d", "e", "f", "g", "h", "j", "k", 
+                         "m", "n", "p", "q", "r", "s", "v", "w", "x", "y", 
+                         "z"]
     end
     
     # generates a url key from a random 5-digit base 31 number, without checking its uniqueness
@@ -16,6 +17,15 @@ module UrlKeyedObject
       (1..5).collect do
         key_encoding[rand(31)]
       end.join('')
+    end
+    
+    # Keeps generating new URL keys until the passed-in block returns true
+    def generate_checked_url_key
+      key = generate_unchecked_url_key
+      while !yield(key)
+        key = generate_unchecked_url_key
+      end
+      key
     end
     
     # Validate the well-formedness of a URL key
@@ -29,5 +39,3 @@ module UrlKeyedObject
     end
   end
 end
-
-require 'url_keyed_object/active_record'

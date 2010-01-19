@@ -83,12 +83,9 @@ describe UrlKeyedObject::ActiveRecord do
     
     it "should be able to keep attempting to create a URL key until one is valid" do
       url_keyed_object = @url_keyed_class.new
-      valid_url_sequence = sequence('valid url sequence')
       
-      UrlKeyedObject.expects(:generate_unchecked_url_key).in_sequence(valid_url_sequence).returns('a1url')
-      url_keyed_object.expects(:valid_url_key?).in_sequence(valid_url_sequence).returns(false)
-      UrlKeyedObject.expects(:generate_unchecked_url_key).in_sequence(valid_url_sequence).returns('a2url')
-      url_keyed_object.expects(:valid_url_key?).in_sequence(valid_url_sequence).returns(true)
+      UrlKeyedObject.expects(:generate_checked_url_key).yields('a2url').returns('a2url')
+      url_keyed_object.expects(:valid_url_key?).with('a2url').returns(true)
       
       @url_keyed_class.publicize_methods do
         url_keyed_object.generate_valid_url_key
