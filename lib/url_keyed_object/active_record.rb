@@ -9,19 +9,18 @@ module UrlKeyedObject
       url_key
     end
     
+    def url_key=(value)
+      logger.warn('Attempt to set #url_key!')
+      nil
+    end
+    
     # --
     # Validations
     # ++
     
     def self.included(model)
       model.class_eval do
-        # validates_presence_of :url_key
-        # validates_uniqueness_of :url_key
-        
         before_create :generate_valid_url_key
-        
-        attr_readonly :url_key
-        attr_protected :url_key
       end
     end
     
@@ -32,7 +31,7 @@ module UrlKeyedObject
       while !self.valid_url_key?(new_url_key) do
         new_url_key = UrlKeyedObject.generate_unchecked_url_key
       end
-      self.url_key = new_url_key
+      write_attribute(:url_key, new_url_key)
     end
     
     def valid_url_key?(url_key)

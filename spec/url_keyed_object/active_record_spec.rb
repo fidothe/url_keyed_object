@@ -54,16 +54,12 @@ describe UrlKeyedObject::ActiveRecord do
     url_keyed_object.url_key.should be_nil
   end
   
-  it "should not allow URL keys to be set once they're saved" do
-    UrlKeyedObject.stubs(:generate_unchecked_url_key).returns('abcde')
+  it "should not allow URL keys to be set" do
     url_keyed_object = @url_keyed_class.new
-    url_keyed_object.save!
     
     url_keyed_object.url_key = 'dfghj'
-    url_keyed_object.save!
     
-    url_keyed_object.reload
-    url_keyed_object.url_key.should == 'abcde'
+    url_keyed_object.url_key.should be_nil
   end
   
   describe "ensuring unique URL keys get created " do
