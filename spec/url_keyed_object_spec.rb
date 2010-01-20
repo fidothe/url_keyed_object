@@ -5,6 +5,10 @@ describe UrlKeyedObject do
     UrlKeyedObject.generate_unchecked_url_key.should match(/[0-9abcdefghjkmnpqrsvwxyz]{5}/)
   end
   
+  it "should be able to generate an arbitrary-length URL key" do
+    UrlKeyedObject.generate_unchecked_url_key(7).should match(/[0-9abcdefghjkmnpqrsvwxyz]{7}/)
+  end
+  
   describe "decoding a moderately dirty URL key (case insensitivity, ambiguous character replacement)" do
     it "should be able to cope with O o 0 ambiguity" do
       UrlKeyedObject.decode_url_key('Oo0ab').should == '000ab'
@@ -37,17 +41,27 @@ describe UrlKeyedObject do
         UrlKeyedObject.well_formed_url_key?(malformed_url_key).should be_false
       end
     end
+    
+    it "should be able to cope with a different specified length" do
+      UrlKeyedObject.well_formed_url_key?('abcdef', 6).should be_true
+    end
   end
   
   describe "validity of URL keys" do
     it "should be able to evaluate a block to check key validity, repeating until it generates one" do
       valid_key_sequence = sequence('valid key sequence')
-      UrlKeyedObject.expects(:generate_unchecked_url_key).in_sequence(valid_key_sequence).returns('a1url')
-      UrlKeyedObject.expects(:generate_unchecked_url_key).in_sequence(valid_key_sequence).returns('a2url')
+      UrlKeyedObject.expects(:generate_unchecked_url_key).with(5).returns('a1url').
+                     in_sequence(valid_key_sequence)
+      UrlKeyedObject.expects(:generate_unchecked_url_key).with(5).returns('a2url').
+                     in_sequence(valid_key_sequence)
       
       key = UrlKeyedObject.generate_checked_url_key { |value| value != 'a1url' }
       
       key.should == 'a2url'
+    end
+    
+    it "should description" do
+      
     end
   end
 end

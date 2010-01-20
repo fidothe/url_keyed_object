@@ -13,24 +13,24 @@ module UrlKeyedObject
     end
     
     # generates a url key from a random 5-digit base 31 number, without checking its uniqueness
-    def generate_unchecked_url_key
-      (1..5).collect do
+    def generate_unchecked_url_key(length = 5)
+      (1..length).collect do
         key_encoding[rand(31)]
       end.join('')
     end
     
     # Keeps generating new URL keys until the passed-in block returns true
-    def generate_checked_url_key
-      key = generate_unchecked_url_key
+    def generate_checked_url_key(length = 5)
+      key = generate_unchecked_url_key(length)
       while !yield(key)
-        key = generate_unchecked_url_key
+        key = generate_unchecked_url_key(length)
       end
       key
     end
     
     # Validate the well-formedness of a URL key
-    def well_formed_url_key?(url_key)
-      !url_key.match(/^[0-9abcdefghjkmnpqrsvwxyz]{5}$/).nil?
+    def well_formed_url_key?(url_key, length = 5)
+      !url_key.match(Regexp.new("^[0-9abcdefghjkmnpqrsvwxyz]{#{length.to_i}}$")).nil?
     end
     
     # decode a moderately dirty URL key

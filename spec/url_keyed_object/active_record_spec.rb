@@ -37,7 +37,7 @@ describe UrlKeyedObject::ActiveRecord do
         'UrlKeyedObjectMock'
       end
       
-      include UrlKeyedObject::ActiveRecord
+      acts_as_url_keyed
     end
     
     ActiveRecord::Base.logger = Logger.new(STDERR)

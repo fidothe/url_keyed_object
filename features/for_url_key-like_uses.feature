@@ -11,7 +11,7 @@ Feature: Using for things which are URL key-like
       """
     Then @value should match /^[a-z0-9]{5}$/
     
-  Scenario: Generating and validating a URL key value
+  Scenario: Generating and validating a URL key value as part of object initialisation
     Given this class:
       """
         class HasOpaqueId
@@ -42,3 +42,17 @@ Feature: Using for things which are URL key-like
         @object_with_id = HasOpaqueId.new
       """
     Then @object_with_id.id should match /^[a-z0-9]{5}$/
+    
+  Scenario: Generating a URL key value of arbitrary length
+    When I make a call to generate a URL key:
+      """
+      @value = UrlKeyedObject.generate_unchecked_url_key(18)
+      """
+    Then @value should match /^[a-z0-9]{18}$/
+  
+  Scenario: Generating and validating a URL key value of arbitrary length
+  When I make a call to generate a valid URL key (with an admittedly nonsensical validation block):
+    """
+    @value = UrlKeyedObject.generate_checked_url_key(18) { |value| value.length == 18 }
+    """
+  Then @value should match /^[a-z0-9]{18}$/

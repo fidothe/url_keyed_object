@@ -20,7 +20,7 @@ Feature: Using with ActiveRecord
     And this class:
       """
       class Thing < ActiveRecord::Base
-        include UrlKeyedObject::ActiveRecord
+        acts_as_url_keyed
       end
       """
   
@@ -48,7 +48,7 @@ Feature: Using with ActiveRecord
     And a warning should have been logged
   
   Scenario: Attempting to set url_key ought to fail
-    When I make an instance using mass-assignment:
+    When I make an instance and set the value of url_key manually:
       """
         @instance = Thing.new
         @instance.url_key = 'abcde'
