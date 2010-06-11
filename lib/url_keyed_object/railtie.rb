@@ -1,9 +1,10 @@
+require 'rails'
 require 'url_keyed_object/active_record'
 
 module UrlKeyedObject
-  class Railtie
-    initializer 'url_keyed_object.active_record_hook' do
-      ActiveRecord::Base.send :include, UrlKeyedObject::ActiveRecord
+  class Railtie < Rails::Railtie
+    initializer 'url_keyed_object.active_record_hook', :after => :preload_frameworks do
+      ::ActiveRecord::Base.extend UrlKeyedObject::ActiveRecordHook
     end
   end
 end

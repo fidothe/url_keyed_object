@@ -40,5 +40,7 @@ module UrlKeyedObject
   end
 end
 
-require 'url_keyed_object/railtie' if defined?(Rails)
+if defined?(Rails::Railtie)
+  require 'url_keyed_object/railtie' 
+end
 

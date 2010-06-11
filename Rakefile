@@ -1,25 +1,6 @@
 require 'rubygems'
 require 'rake'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "url_keyed_object"
-    gem.summary = %Q{Making it easy to work with objects with URL keys}
-    gem.description = %Q{Making it easy to work with Rails objects which use a URL key in their URL instead of their database ID.}
-    gem.email = "matt@reprocessed.org"
-    gem.homepage = "http://github.com/fidothe/url_keyed_object"
-    gem.authors = ["Matt Patterson"]
-    gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_development_dependency "cucumber", ">= 0.5"
-    gem.add_development_dependency "activerecord", ">= 2.3"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
-end
-
 require 'spec/rake/spectask'
 Spec::Rake::SpecTask.new(:spec) do |spec|
   spec.libs << 'lib' << 'spec'
