@@ -39,3 +39,6 @@ module UrlKeyedObject
     end
   end
 end
+
+require 'url_keyed_object/railtie' if defined?(Rails)
+
