@@ -1,15 +1,19 @@
 require 'fileutils'
 
 Before("@db") do |scenario|
-  require 'activerecord'
+  require 'active_record'
+  require 'url_keyed_object/active_record'
+
   @db_dir = ::Dir.mktmpdir
   begin
-    # Create the SQLite database
+    # Create the SQLite database, pretend the Railtie has run...
+    @recording_logger = RecordingLogger.new($stderr)
+
+    ActiveRecord::Base.extend UrlKeyedObject::ActiveRecord
     ActiveRecord::Base.establish_connection({'adapter' => 'sqlite3',
     'database' => "#{@db_dir}/feature.sqlite3", 'pool' => 5, 'timeout' => 5000
     })
     ActiveRecord::Base.connection
-    @recording_logger = RecordingLogger.new($stderr)
     ActiveRecord::Base.logger = @recording_logger
   rescue
     $stderr.puts $!, *($!.backtrace)
