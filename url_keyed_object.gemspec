@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "url_keyed_object"
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Patterson"]
@@ -32,10 +32,10 @@ Gem::Specification.new do |s|
     "features/**/*.feature"
   ])
 
-  s.add_development_dependency('rspec', '>= 1.2.9')
+  s.add_development_dependency('rspec', '>= 2.8')
   s.add_development_dependency('mocha')
   s.add_development_dependency('cucumber', '>= 0.5')
-  s.add_development_dependency('activerecord', '>= 2.3')
+  s.add_development_dependency('activerecord', '>= 3.2')
   s.add_development_dependency('sqlite3')
 end
 

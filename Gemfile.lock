@@ -50,9 +50,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (>= 2.3)
+  activerecord (>= 3.2)
   cucumber (>= 0.5)
   mocha
-  rspec (>= 1.2.9)
+  rspec (>= 2.8)
   sqlite3
   url_keyed_object!
