@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = Dir.glob([
-    "VERSION",
     "README.rdoc",
     "LICENSE",
     "Rakefile",
@@ -25,7 +24,6 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/fidothe/url_keyed_object"
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.3.6"
   s.summary = %q{Making it easy to work with objects with URL keys}
   s.test_files = Dir.glob([
     "spec/spec.opts",
@@ -33,24 +31,11 @@ Gem::Specification.new do |s|
     "features/**/*.rb",
     "features/**/*.feature"
   ])
-  
-  if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 3
-    
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
-      s.add_development_dependency(%q<cucumber>, [">= 0.5"])
-      s.add_development_dependency(%q<activerecord>, [">= 2.3"])
-    else
-      s.add_dependency(%q<rspec>, [">= 1.2.9"])
-      s.add_dependency(%q<cucumber>, [">= 0.5"])
-      s.add_dependency(%q<activerecord>, [">= 2.3"])
-    end
-  else
-    s.add_dependency(%q<rspec>, [">= 1.2.9"])
-    s.add_dependency(%q<cucumber>, [">= 0.5"])
-    s.add_dependency(%q<activerecord>, [">= 2.3"])
-  end
+
+  s.add_development_dependency('rspec', '>= 1.2.9')
+  s.add_development_dependency('mocha')
+  s.add_development_dependency('cucumber', '>= 0.5')
+  s.add_development_dependency('activerecord', '>= 2.3')
+  s.add_development_dependency('sqlite3')
 end
 

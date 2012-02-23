@@ -1,17 +1,13 @@
-$:.unshift(File.dirname(__FILE__))
-$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'rubygems'
-gem 'activerecord'
-require 'url_keyed_object'
-require 'url_keyed_object/active_record'
-require 'spec'
-require 'spec/autorun'
+lib_path = File.expand_path('../../lib', __FILE__)
+$:.unshift(lib_path) unless $:.include?(lib_path)
 
-Spec::Runner.configure do |config|
+require 'url_keyed_object'
+
+RSpec.configure do |config|
   config.mock_with :mocha
 end
 
-Spec::Matchers.define :use_method do |method|
+RSpec::Matchers.define :use_method do |method|
   chain :for_callback do |callback|
     @callback = callback
   end
@@ -29,9 +25,9 @@ class Class
       public *saved_private_instance_methods
       public *saved_protected_instance_methods
     end
-    
+
     yield
-    
+
     self.class_eval do
       private *saved_private_instance_methods
       protected *saved_protected_instance_methods
