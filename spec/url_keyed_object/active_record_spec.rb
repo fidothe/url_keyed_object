@@ -1,101 +1,94 @@
 require 'spec_helper'
-require 'active_record'
-require 'tmpdir'
-require 'fileutils'
-require 'logger'
+require 'active_model/callbacks'
+require 'active_model/mass_assignment_security'
 
-class SpecMigration < ActiveRecord::Migration
-  def self.up
-    create_table :things do |t|
-      t.string    :url_key, :null => false
-      
-      t.timestamps
+require 'url_keyed_object/active_record'
+
+
+class UrlKeyedModel
+  extend ActiveModel::Callbacks
+  include ActiveModel::MassAssignmentSecurity
+
+  define_model_callbacks :create
+
+  def initialize(attrs = {})
+    @attributes = sanitize_for_mass_assignment(attrs)
+  end
+
+  def url_key
+    @attributes[:url_key]
+  end
+
+  def read_attribute(key)
+    @attributes[key]
+  end
+
+  def write_attribute(key, value)
+    @attributes[key] = value
+  end
+
+  extend UrlKeyedObject::ActiveRecord
+
+  has_url_key
+
+  def save
+    run_callbacks :create do
+      #logic
     end
   end
 end
 
 describe UrlKeyedObject::ActiveRecord do
-  before(:all) do
-    @db_dir = ::Dir.mktmpdir
-    begin
-      # Create the SQLite database
-      ActiveRecord::Base.establish_connection({'adapter' => 'sqlite3',
-      'database' => "#{@db_dir}/spec.sqlite3", 'pool' => 5, 'timeout' => 5000
-      })
-      ActiveRecord::Base.connection
-    rescue
-      $stderr.puts $!, *($!.backtrace)
-      $stderr.puts "Couldn't create database for #{"#{@db_dir}/feature.sqlite3".inspect}"
-    end
-    
-    SpecMigration.migrate(:up)
-    
-    @url_keyed_class = Class.new(ActiveRecord::Base)
-    @url_keyed_class.class_eval do
-      set_table_name 'things'
-      def self.name
-        'UrlKeyedObjectMock'
-      end
-      
-      acts_as_url_keyed
-    end
-    
-    ActiveRecord::Base.logger = Logger.new(STDERR)
-  end
-  
-  after(:all) do
-    ActiveRecord::Base.connection.disconnect!
-    FileUtils.remove_entry_secure @db_dir
-  end
-  
-  it "should protect URL keys from mass-assignment" do
-    url_keyed_object = @url_keyed_class.new(:url_key => 'woo')
-    
+  let(:url_keyed_object) { UrlKeyedModel.new }
+
+  it "protects URL keys from mass-assignment" do
+    url_keyed_object = UrlKeyedModel.new(:url_key => 'woo')
+
     url_keyed_object.url_key.should be_nil
   end
-  
-  it "should not allow URL keys to be set" do
-    url_keyed_object = @url_keyed_class.new
-    
+
+  it "does not allow URL keys to be set" do
     url_keyed_object.url_key = 'dfghj'
-    
+
     url_keyed_object.url_key.should be_nil
   end
-  
-  describe "ensuring unique URL keys get created " do
-    it "should be able to verify that a URL key is valid" do
-      @url_keyed_class.expects(:find_by_url_key).with('a_url').returns(nil)
-      url_keyed_object = @url_keyed_class.new
-      
-      @url_keyed_class.publicize_methods do
-        url_keyed_object.valid_url_key?('a_url').should be_true
-      end
+
+  it "returns the contents of the url_key column for to_param" do
+    url_keyed_object.stubs(:url_key).returns('hello')
+
+    url_keyed_object.to_param.should == 'hello'
+  end
+
+  describe "ensuring unique URL keys get created" do
+    let(:ar_helper) { UrlKeyedObject::ActiveRecord::Helper.new(UrlKeyedModel, :url_key, 5) }
+
+    it "can verify that a URL key is valid" do
+      UrlKeyedModel.expects(:find_by_url_key).with('a_url').returns(nil)
+
+      ar_helper.valid_url_key?('a_url').should be_true
     end
-    
-    it "should be able to verify that a URL key is not valid" do
-      @url_keyed_class.expects(:find_by_url_key).with('a_url').returns(@url_keyed_class.new)
-      url_keyed_object = @url_keyed_class.new
-      
-      @url_keyed_class.publicize_methods do
-        url_keyed_object.valid_url_key?('a_url').should be_false
-      end
+
+    it "can verify that a URL key is not valid" do
+      UrlKeyedModel.expects(:find_by_url_key).with('a_url').returns(UrlKeyedModel.new)
+
+      ar_helper.valid_url_key?('a_url').should be_false
     end
-    
-    it "should be able to keep attempting to create a URL key until one is valid" do
-      url_keyed_object = @url_keyed_class.new
-      
+
+    it "keeps attempting to create a URL key until one is valid" do
+      url_keyed_object = UrlKeyedModel.new
+
       UrlKeyedObject.expects(:generate_checked_url_key).yields('a2url').returns('a2url')
-      url_keyed_object.expects(:valid_url_key?).with('a2url').returns(true)
-      
-      @url_keyed_class.publicize_methods do
-        url_keyed_object.generate_valid_url_key
-        
-        url_keyed_object.url_key.should == 'a2url'
-      end
+      ar_helper.expects(:valid_url_key?).with('a2url').returns(true)
+
+      ar_helper.generate_valid_url_key(url_keyed_object)
+
+      url_keyed_object.url_key.should == 'a2url'
     end
-    
-    it "should use a before_create callback to ensure that a URL key is created" do
-      @url_keyed_class.should use_method(:generate_valid_url_key).for_callback(:before_create)
+
+    it "uses a before_create callback to ensure that a URL key is created" do
+      UrlKeyedModel.url_key_helper.expects(:generate_valid_url_key).with(url_keyed_object)
+
+      url_keyed_object.save
     end
   end
 end
