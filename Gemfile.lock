@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    url_keyed_object (0.4.0)
+    url_keyed_object (0.4.1)
 
 GEM
   remote: http://rubygems.org/
